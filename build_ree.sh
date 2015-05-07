@@ -11,9 +11,8 @@ cd $TEMP_DIR
 
 rm -rf /tmp/tmp.*
 
-echo "Serving on port $PORT from ${TEMP_DIR}"
+echo "Serving from ${TEMP_DIR}"
 cd /tmp
-
 python -m SimpleHTTPServer $PORT &
 
 curl https://rubyenterpriseedition.googlecode.com/files/${FULL_NAME}.tar.gz -s -o - | tar zxf -
@@ -28,10 +27,17 @@ patch -p1 < tcmalloc_declare_memalign_volatile.patch
 
 cd ../
 
-./installer --auto $TEMP_DIR/app/vendor/ruby-1.8.7 --no-dev-docs --no-tcmalloc
+./installer --auto $TEMP_DIR/ruby-1.8.7 --no-dev-docs --no-tcmalloc
 
-cd $TEMP_DIR
-tar czvf /tmp/$FULL_NAME.tar.gz .
+echo "Creating tarball without the '-build' suffix"
+mkdir -p /app/vendor
+mv $TEMP_DIR/ruby-1.8.7 /app/vendor/
+tar czvf /tmp/$FULL_NAME.tar.gz /app/vendor/ruby-1.8.7
+
+echo "Creating tarball with the '-build' suffix"
+rm -rf /tmp/*
+mv /app/vendor/ruby-build-1.8.7 /tmp
+tar xzvf /tmp/ruby-build-1.8.7.tar.gz /tmp/ruby-build-1.8.7
 
 while true
 do
