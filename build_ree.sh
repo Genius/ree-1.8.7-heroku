@@ -11,8 +11,9 @@ cd $TEMP_DIR
 
 rm -rf /tmp/tmp.*
 
-echo "Serving from ${TEMP_DIR}"
+echo "Serving on port $PORT from ${TEMP_DIR}"
 cd /tmp
+
 python -m SimpleHTTPServer $PORT &
 
 curl https://rubyenterpriseedition.googlecode.com/files/${FULL_NAME}.tar.gz -s -o - | tar zxf -
