@@ -1,1 +1,1 @@
-web: build_ree.sh
+web: ./build_ree.sh
