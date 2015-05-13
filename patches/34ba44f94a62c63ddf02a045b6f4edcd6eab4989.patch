@@ -1,0 +1,129 @@
+From 34ba44f94a62c63ddf02a045b6f4edcd6eab4989 Mon Sep 17 00:00:00 2001
+From: nagachika <nagachika@b2dd03c8-39d4-4d8f-98ff-823fe69b080e>
+Date: Fri, 22 Nov 2013 04:00:39 +0000
+Subject: [PATCH] cherry pick 46cd2f4 for CVE-2013-4164
+
+merge revision(s) 43775:
+
+	* util.c (ruby_strtod): ignore too long fraction part, which does not
+	  affect the result.
+
+git-svn-id: svn+ssh://ci.ruby-lang.org/ruby/branches/ruby_2_0_0@43778 b2dd03c8-39d4-4d8f-98ff-823fe69b080e
+
+Conflicts:
+	ChangeLog
+	test/ruby/test_float.rb
+	version.h
+---
+ ChangeLog               |  5 +++++
+ test/ruby/test_float.rb |  6 ++++++
+ util.c                  | 14 ++++++++++++--
+ version.h               | 10 +++++-----
+ 4 files changed, 28 insertions(+), 7 deletions(-)
+
+diff --git a/ChangeLog b/ChangeLog
+index a09237e..e37c7e0 100644
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -1,3 +1,8 @@
++Fri Nov 22 12:46:08 2013  Nobuyoshi Nakada  <nobu@ruby-lang.org>
++
++	* util.c (ruby_strtod): ignore too long fraction part, which does not
++	  affect the result.
++
+ Wed Feb  8 14:06:59 2012  Hiroshi Nakamura  <nahi@ruby-lang.org>
+ 
+ 	* ext/openssl/ossl_ssl.c: Add SSL constants and allow to unset SSL
+diff --git a/test/ruby/test_float.rb b/test/ruby/test_float.rb
+index b6e643d..6daf061 100644
+--- a/test/ruby/test_float.rb
++++ b/test/ruby/test_float.rb
+@@ -171,4 +171,10 @@ def test_cmp
+     assert_raise(ArgumentError) { 1.0 < nil }
+     assert_raise(ArgumentError) { 1.0 <= nil }
+   end
++
++  def test_long_string
++    assert_separately([], <<-'end;')
++    assert_in_epsilon(10.0, ("1."+"1"*300000).to_f*9)
++    end;
++  end
+ end
+diff --git a/util.c b/util.c
+index 62f3368..e98efc6 100644
+--- a/util.c
++++ b/util.c
+@@ -892,6 +892,11 @@ extern void *MALLOC(size_t);
+ #else
+ #define MALLOC malloc
+ #endif
++#ifdef FREE
++extern void FREE(void*);
++#else
++#define FREE free
++#endif
+ 
+ #ifndef Omit_Private_Memory
+ #ifndef PRIVATE_MEM
+@@ -1176,7 +1181,7 @@ Balloc(int k)
+ #endif
+ 
+     ACQUIRE_DTOA_LOCK(0);
+-    if ((rv = freelist[k]) != 0) {
++    if (k <= Kmax && (rv = freelist[k]) != 0) {
+         freelist[k] = rv->next;
+     }
+     else {
+@@ -1186,7 +1191,7 @@ Balloc(int k)
+ #else
+         len = (sizeof(Bigint) + (x-1)*sizeof(ULong) + sizeof(double) - 1)
+                 /sizeof(double);
+-        if (pmem_next - private_mem + len <= PRIVATE_mem) {
++        if (k <= Kmax && pmem_next - private_mem + len <= PRIVATE_mem) {
+             rv = (Bigint*)pmem_next;
+             pmem_next += len;
+         }
+@@ -1205,6 +1210,10 @@ static void
+ Bfree(Bigint *v)
+ {
+     if (v) {
++        if (v->k > Kmax) {
++            FREE(v);
++            return;
++        }
+         ACQUIRE_DTOA_LOCK(0);
+         v->next = freelist[v->k];
+         freelist[v->k] = v;
+@@ -2200,6 +2209,7 @@ ruby_strtod(const char *s00, char **se)
+         for (; c >= '0' && c <= '9'; c = *++s) {
+ have_dig:
+             nz++;
++            if (nf > DBL_DIG * 2) continue;
+             if (c -= '0') {
+                 nf += nz;
+                 for (i = 1; i < nz; i++)
+diff --git a/version.h b/version.h
+index d6f16f5..6773217 100644
+--- a/version.h
++++ b/version.h
+@@ -1,15 +1,15 @@
+ #define RUBY_VERSION "1.8.7"
+-#define RUBY_RELEASE_DATE "2012-02-08"
++#define RUBY_RELEASE_DATE "2013-11-26"
+ #define RUBY_VERSION_CODE 187
+-#define RUBY_RELEASE_CODE 20120208
+-#define RUBY_PATCHLEVEL 358
++#define RUBY_RELEASE_CODE 20131126
++#define RUBY_PATCHLEVEL 359
+ 
+ #define RUBY_VERSION_MAJOR 1
+ #define RUBY_VERSION_MINOR 8
+ #define RUBY_VERSION_TEENY 7
+ #define RUBY_RELEASE_YEAR 2012
+-#define RUBY_RELEASE_MONTH 2
+-#define RUBY_RELEASE_DAY 8
++#define RUBY_RELEASE_MONTH 11
++#define RUBY_RELEASE_DAY 26
+ 
+ #ifdef RUBY_EXTERN
+ RUBY_EXTERN const char ruby_version[];

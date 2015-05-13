@@ -1,0 +1,39 @@
+From 5384967a015be227e16af7a332a50d45e14ed0ad Mon Sep 17 00:00:00 2001
+From: usa <usa@b2dd03c8-39d4-4d8f-98ff-823fe69b080e>
+Date: Fri, 22 Nov 2013 04:18:47 +0000
+Subject: [PATCH] merge revision(s) 43780:
+
+* util.c (ruby_strtod): BigMath requires more precision.
+
+git-svn-id: svn+ssh://ci.ruby-lang.org/ruby/branches/ruby_1_9_3@43782 b2dd03c8-39d4-4d8f-98ff-823fe69b080e
+---
+ util.c    | 2 +-
+ version.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/util.c b/util.c
+index e98efc6..54a1604 100644
+--- a/util.c
++++ b/util.c
+@@ -2209,7 +2209,7 @@ ruby_strtod(const char *s00, char **se)
+         for (; c >= '0' && c <= '9'; c = *++s) {
+ have_dig:
+             nz++;
+-            if (nf > DBL_DIG * 2) continue;
++            if (nf > DBL_DIG * 4) continue;
+             if (c -= '0') {
+                 nf += nz;
+                 for (i = 1; i < nz; i++)
+diff --git a/version.h b/version.h
+index 6773217..878532b 100644
+--- a/version.h
++++ b/version.h
+@@ -2,7 +2,7 @@
+ #define RUBY_RELEASE_DATE "2013-11-26"
+ #define RUBY_VERSION_CODE 187
+ #define RUBY_RELEASE_CODE 20131126
+-#define RUBY_PATCHLEVEL 359
++#define RUBY_PATCHLEVEL 360
+ 
+ #define RUBY_VERSION_MAJOR 1
+ #define RUBY_VERSION_MINOR 8
