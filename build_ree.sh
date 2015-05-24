@@ -21,7 +21,7 @@ function download_and_patch() {
   curl https://rubyenterpriseedition.googlecode.com/files/${FULL_NAME}.tar.gz -s -o - | tar zxf -
   cd $FULL_NAME/source
   curl -o 34ba44f94a62c63ddf02a045b6f4edcd6eab4989.patch https://raw.githubusercontent.com/Genius/ree-1.8.7-heroku/master/patches/34ba44f94a62c63ddf02a045b6f4edcd6eab4989.patch
-  curl -o 5384967a015be227e16af7a332a50d45e14ed0ad.patch https://raw.githubusercontent.com/Genius/ree-1.8.7-heroku/master/patches5384967a015be227e16af7a332a50d45e14ed0ad.patch
+  curl -o 5384967a015be227e16af7a332a50d45e14ed0ad.patch https://raw.githubusercontent.com/Genius/ree-1.8.7-heroku/master/patches/5384967a015be227e16af7a332a50d45e14ed0ad.patch
   curl -o tcmalloc_declare_memalign_volatile.patch https://raw.githubusercontent.com/Genius/ree-1.8.7-heroku/master/patches/tcmalloc_declare_memalign_volatile.patch
   patch -p1 < 34ba44f94a62c63ddf02a045b6f4edcd6eab4989.patch
   patch -p1 < 5384967a015be227e16af7a332a50d45e14ed0ad.patch
