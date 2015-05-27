@@ -43,7 +43,9 @@ function run_installer() {
 
   ./installer --auto $DIRECTORY --no-dev-docs --no-tcmalloc
 
-  tar czvf /tmp/${OUTPUT}.tar.gz $DIRECTORY
+  cd $DIRECTORY && {
+    tar czvf /tmp/${OUTPUT}.tar.gz .
+  }
 }
 
 function listen_and_serve() {
