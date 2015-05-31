@@ -38,6 +38,7 @@ function run_installer() {
 
   cd $TEMP_DIR/$FULL_NAME
 
+  export CFLAGS="-O2 -fno-tree-dce -fno-optimize-sibling-calls"
   ./installer --auto $DIRECTORY --no-dev-docs --no-tcmalloc
 
   cd $DIRECTORY && {
