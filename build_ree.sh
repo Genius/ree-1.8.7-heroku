@@ -39,7 +39,7 @@ function run_installer() {
   cd $TEMP_DIR/$FULL_NAME
 
   export CFLAGS="-O2 -fno-tree-dce -fno-optimize-sibling-calls"
-  ./installer --auto $DIRECTORY --no-dev-docs --no-tcmalloc
+  ./installer --auto $DIRECTORY --no-dev-docs --dont-install-useful-gems --no-tcmalloc
 
   cd $DIRECTORY && {
     tar czvf /tmp/${OUTPUT}.tar.gz .
