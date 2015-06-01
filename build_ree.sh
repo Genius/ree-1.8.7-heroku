@@ -22,6 +22,7 @@ function download_and_patch() {
   cd $FULL_NAME/source
   patch -p1 < /app/patches/34ba44f94a62c63ddf02a045b6f4edcd6eab4989.patch
   patch -p1 < /app/patches/5384967a015be227e16af7a332a50d45e14ed0ad.patch
+  patch -p1 < /app/patches/CVE-2015-1855.patch
   patch -p1 < /app/patches/tcmalloc_declare_memalign_volatile.patch
 }
 
