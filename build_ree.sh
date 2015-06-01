@@ -43,7 +43,7 @@ function run_installer() {
   ./installer --auto $DIRECTORY --no-dev-docs --dont-install-useful-gems --no-tcmalloc
 
   cd $DIRECTORY && {
-    tar czvf /tmp/${OUTPUT}.tar.gz .
+    tar czvf /tmp/${OUTPUT}.tgz .
   }
 }
 
