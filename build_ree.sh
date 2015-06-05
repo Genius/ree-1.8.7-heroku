@@ -6,12 +6,6 @@ function init() {
   FULL_VERSION="1.8.7-2012.02"
   FULL_NAME="ruby-enterprise-${FULL_VERSION}"
   TEMP_DIR=$(mktemp -d)
-
-  echo "Serving from /tmp"
-
-  cd /tmp
-
-  python -m SimpleHTTPServer $PORT &
 }
 
 function download_and_patch() {
@@ -48,6 +42,12 @@ function run_installer() {
 }
 
 function listen_and_serve() {
+  echo "Serving from /tmp"
+
+  cd /tmp
+
+  python -m SimpleHTTPServer $PORT &
+
   while true
   do
     sleep 60
@@ -58,4 +58,6 @@ function listen_and_serve() {
 run_installer /app/vendor/ruby-1.8.7 ruby-1.8.7
 run_installer /tmp/ruby-1.8.7 ruby-build-1.8.7
 
-listen_and_serve
+if [ ! -z "$BUILD_ONLY" ]; then
+  listen_and_serve
+fi
